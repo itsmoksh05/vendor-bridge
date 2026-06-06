@@ -20,7 +20,7 @@ const rfqSchema = z.object({
     quantity: z.preprocess((val) => Number(val), z.number().min(1, { message: 'Qty >= 1' })),
     unit: z.string().min(1, { message: 'Unit is required' }),
   })).min(1, { message: 'Add at least one item' }),
-  assignedVendors: z.array(z.string()).min(1, { message: 'Select at least one supplier' }),
+  assignedVendors: z.array(z.coerce.string()).min(1, { message: 'Select at least one supplier' }),
 });
 
 export function RFQCreatePage() {
@@ -65,8 +65,7 @@ export function RFQCreatePage() {
         const res = await axios.get('/vendors');
         const activeVendors = res.data.filter(v => v.status === 'active');
         setVendors(activeVendors);
-        // Auto-assign vendors behind the scenes to keep Zod validated submitting simple
-        setValue('assignedVendors', activeVendors.map(v => v.id), { shouldValidate: true });
+        setValue('assignedVendors', activeVendors.map(v => String(v.id)), { shouldValidate: true });
       } catch (error) {
         toast.error('Failed to load active vendors list.');
       } finally {
@@ -100,7 +99,11 @@ export function RFQCreatePage() {
     }
     setLoading(true);
     try {
-      await axios.post('/rfqs', data);
+      const payload = {
+        ...data,
+        assignedVendorIds: data.assignedVendors.map((id) => Number(id)).filter(Boolean),
+      };
+      await axios.post('/rfqs', payload);
       toast.success('RFQ published successfully!');
       navigate('/rfq');
     } catch (error) {
@@ -290,6 +293,45 @@ export function RFQCreatePage() {
             </div>
             {errors.items && (
               <p className="text-xs text-[#EF4444] mt-1 font-semibold">{errors.items.message}</p>
+            )}
+          </div>
+
+          <div className="lg:col-span-12 flex flex-col gap-3 bg-[#111827] border border-white/5 rounded-2xl p-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-white">Invite Suppliers</h3>
+                <p className="text-xs text-[#9CA3AF] mt-0.5">Selected vendors will be linked to this RFQ.</p>
+              </div>
+              <span className="text-xs text-[#9CA3AF]">
+                {watch('assignedVendors').length} selected
+              </span>
+            </div>
+
+            {loadingVendors ? (
+              <div className="text-sm text-[#9CA3AF] py-4">Loading active vendors...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                {vendors.map((vendor) => (
+                  <label
+                    key={vendor.id}
+                    className="flex items-start gap-3 rounded-xl border border-white/10 bg-[#0A0F1E] p-3 hover:border-[#6366F1]/50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      value={String(vendor.id)}
+                      className="mt-1 h-4 w-4 accent-[#6366F1]"
+                      {...register('assignedVendors')}
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-white truncate">{vendor.name || vendor.companyName}</span>
+                      <span className="block text-xs text-[#9CA3AF] truncate">{vendor.category} | {vendor.email}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+            {errors.assignedVendors && (
+              <p className="text-xs text-[#EF4444] mt-1 font-semibold">{errors.assignedVendors.message}</p>
             )}
           </div>
         </div>

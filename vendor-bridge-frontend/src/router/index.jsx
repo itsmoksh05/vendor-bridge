@@ -30,6 +30,8 @@ import InvoiceListPage from '../pages/invoices/InvoiceListPage';
 import InvoiceDetailPage from '../pages/invoices/InvoiceDetailPage';
 import ActivityLogsPage from '../pages/activity/ActivityLogsPage';
 import ReportsPage from '../pages/reports/ReportsPage';
+import ProfileSettingsPage from '../pages/settings/ProfileSettingsPage';
+import SystemSettingsPage from '../pages/settings/SystemSettingsPage';
 
 // User role configurations
 const ROLES = {
@@ -253,6 +255,18 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.OFFICER, ROLES.MANAGER]}>
             <ReportsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/profile',
+        element: <ProfileSettingsPage />,
+      },
+      {
+        path: '/settings',
+        element: (
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.OFFICER, ROLES.MANAGER]}>
+            <SystemSettingsPage />
           </ProtectedRoute>
         ),
       },

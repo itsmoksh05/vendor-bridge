@@ -34,6 +34,8 @@ export function AppLayout() {
 
     if (pathname === '/activity') return 'Activity Logs';
     if (pathname === '/reports') return 'Reports';
+    if (pathname === '/profile') return 'Profile Settings';
+    if (pathname === '/settings') return 'System Settings';
 
     return 'VendorBridge';
   };

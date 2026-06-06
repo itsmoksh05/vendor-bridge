@@ -29,6 +29,7 @@ export function Button({
 
   const currentVariant = variants[variant] || variants.primary;
   const currentSize = sizes[size] || sizes.md;
+  const content = typeof children === 'string' ? <span>{children}</span> : children;
 
   return (
     <button
@@ -46,7 +47,7 @@ export function Button({
       ) : Icon ? (
         <Icon className={`${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4'} flex-shrink-0`} />
       ) : null}
-      <span>{children}</span>
+      {content}
     </button>
   );
 }
