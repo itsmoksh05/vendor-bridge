@@ -1,40 +1,36 @@
-import { FileText, CheckCircle2, ShoppingCart, Users, Play, ArrowRight, Sparkles } from "lucide-react";
+import { FileText, CheckCircle2, ShoppingCart, Users, Play, ArrowRight, Sparkles } from 'lucide-react';
 
 const stats = [
-  { label: "Active RFQs", value: "12", icon: FileText, tint: "text-indigo-300" },
-  { label: "Pending Approvals", value: "4", icon: CheckCircle2, tint: "text-amber-300" },
-  { label: "POs Generated", value: "38", icon: ShoppingCart, tint: "text-emerald-300" },
-  { label: "Vendors", value: "127", icon: Users, tint: "text-cyan-300" },
+  { label: 'Active RFQs', value: '12', icon: FileText, tint: 'text-indigo-300' },
+  { label: 'Pending Approvals', value: '4', icon: CheckCircle2, tint: 'text-amber-300' },
+  { label: 'POs Generated', value: '38', icon: ShoppingCart, tint: 'text-emerald-300' },
+  { label: 'Vendors', value: '127', icon: Users, tint: 'text-cyan-300' },
 ];
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28">
-      {/* Orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-32 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.45),transparent_60%)] blur-2xl animate-orb" />
-        <div className="absolute top-1/3 -right-40 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.38),transparent_60%)] blur-2xl animate-orb-2" />
-        <div className="absolute bottom-0 left-1/3 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.25),transparent_60%)] blur-2xl animate-orb-slow" />
-        <div className="absolute inset-0 grid-bg opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_75%)]" />
+        <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_35%,transparent_78%)]" />
       </div>
 
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Procurement ERP, reimagined for modern teams
+            Procurement ERP for busy teams
           </div>
           <h1 className="mt-6 font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-            <span className="text-gradient">Procurement, Simplified.</span>
+            <span className="text-gradient">Procurement made clear.</span>
             <br />
-            <span className="text-foreground">Vendors, Unified.</span>
+            <span className="text-foreground">Vendors kept close.</span>
           </h1>
           <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
-            VendorBridge brings your entire procurement lifecycle — RFQs, quotations,
-            approvals, and invoices — into one intelligent ERP platform.
+            VendorBridge keeps RFQs, quotations, approvals, purchase orders, and invoices
+            in one workspace your team can understand at a glance.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <button className="group inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_10px_40px_-10px_rgba(99,102,241,0.8)] transition-all hover:translate-y-[-1px] hover:bg-primary/90">
+            <button className="group inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_34px_rgba(99,102,241,0.35)] transition-all hover:-translate-y-0.5 hover:bg-primary/90">
               Get Started Free
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
@@ -47,9 +43,9 @@ export function Hero() {
           </div>
           <div className="mt-8 flex items-center gap-6 text-xs text-muted-foreground">
             <div className="flex -space-x-2">
-              {["#6366f1", "#22d3ee", "#a78bfa", "#f59e0b"].map((c, i) => (
+              {['#6366f1', '#22d3ee', '#a78bfa', '#f59e0b'].map((c) => (
                 <div
-                  key={i}
+                  key={c}
                   className="h-7 w-7 rounded-full ring-2 ring-background"
                   style={{ background: c }}
                 />
@@ -59,10 +55,9 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Floating dashboard card */}
         <div className="relative">
-          <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/30 via-violet-500/20 to-cyan-400/10 blur-2xl" />
-          <div className="glass-strong relative rounded-2xl p-5 shadow-2xl">
+          <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-primary/25 via-violet-500/15 to-cyan-400/10 blur-2xl" />
+          <div className="glass-strong relative rounded-2xl p-5">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
@@ -86,13 +81,13 @@ export function Hero() {
               {stats.map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:bg-white/[0.06]"
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-all hover:-translate-y-0.5 hover:bg-white/[0.06]"
                 >
                   <div className="flex items-center justify-between">
                     <s.icon className={`h-4 w-4 ${s.tint}`} />
                     <span className="text-[10px] text-muted-foreground">Today</span>
                   </div>
-                  <p className="mt-3 font-display text-3xl font-bold text-foreground">{s.value}</p>
+                  <p className="mt-3 font-display text-3xl font-semibold text-foreground">{s.value}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{s.label}</p>
                 </div>
               ))}
@@ -100,7 +95,7 @@ export function Hero() {
 
             <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">RFQ #2048 · Office Equipment</span>
+                <span className="text-muted-foreground">RFQ #2048 - Office Equipment</span>
                 <span className="text-emerald-300">3 quotes received</span>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
@@ -112,7 +107,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Floating mini cards */}
           <div className="glass absolute -left-6 top-10 hidden rounded-xl p-3 shadow-xl md:block">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-300" />
@@ -126,8 +120,8 @@ export function Hero() {
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
               <div className="text-xs">
-                <p className="font-semibold">AI suggested vendor</p>
-                <p className="text-muted-foreground">Saves ~12%</p>
+                <p className="font-semibold">Best quote highlighted</p>
+                <p className="text-muted-foreground">Saves about 12%</p>
               </div>
             </div>
           </div>

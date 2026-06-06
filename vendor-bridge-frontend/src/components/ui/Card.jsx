@@ -10,14 +10,14 @@ export function Card({
 }) {
   return (
     <div
-      className={`glass rounded-xl p-6 shadow-2xl relative overflow-hidden transition-all duration-300 hover:border-white/15 ${className}`}
+      className={`glass rounded-2xl p-6 relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300/25 hover:shadow-[0_22px_70px_rgba(15,23,42,0.45)] ${className}`}
       {...props}
     >
       {(title || subtitle || action) && (
-        <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-4 mb-5">
+        <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4 mb-5">
           <div>
             {title && (
-              <h3 className="font-display text-lg font-bold text-[#F9FAFB]">
+              <h3 className="font-display text-lg font-semibold text-[#F9FAFB]">
                 {title}
               </h3>
             )}

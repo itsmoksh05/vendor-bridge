@@ -85,100 +85,120 @@ export function ApprovalDetailPage() {
 
   const isPending = approval.status === 'pending';
 
+  const subtotalVal = (approval.amount || 19430) / 1.1;
+  const vatVal = (approval.amount || 19430) - subtotalVal;
+  const totalVal = approval.amount || 19430;
+
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between gap-4 border-b border-[#1F2937] pb-5">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" icon={ArrowLeft} onClick={() => navigate('/approvals')}>
-            Back
-          </Button>
-          <div>
-            <h2 className="text-xl font-display font-extrabold text-white">RFQ Award Approval</h2>
-            <p className="text-sm text-[#9CA3AF] mt-0.5">Authorization chain logs for {approval.rfqNumber}</p>
+      {/* Header */}
+      <div className="border-b border-white/5 pb-4">
+        <h2 className="text-3xl font-bold text-white tracking-tight">Approved Workflow</h2>
+        <p className="text-sm text-[#9CA3AF] mt-0.5">
+          RFQ: {approval.title} — Vendor: {approval.vendorName} — {formatCurrency(totalVal)}
+        </p>
+      </div>
+
+      {/* Stepper Timeline */}
+      <div className="flex items-center justify-between w-full max-w-xl mx-auto mb-6 relative">
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/10 -translate-y-1/2 z-0" />
+        
+        {/* Step 1 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold text-sm">
+            ✓
+          </div>
+          <span className="text-xs font-semibold text-white">Procurement Officer</span>
+        </div>
+
+        {/* Step 2 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold text-sm">
+            2
+          </div>
+          <span className="text-xs font-semibold text-white">Department Head</span>
+        </div>
+
+        {/* Step 3 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#1F2937] border border-white/20 text-[#9CA3AF] flex items-center justify-center font-bold text-sm bg-[#0A0F1E]">
+            3
+          </div>
+          <span className="text-xs font-semibold text-[#9CA3AF]">Finance Director</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Comments */}
+        <div className="lg:col-span-8 flex flex-col gap-5 bg-[#111827] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-white mb-1">Workflow Comments</h3>
+          
+          <div className="p-4 bg-[#0A0F1E] border border-white/10 rounded-xl">
+            <p className="text-xs text-[#9CA3AF] font-semibold uppercase mb-1">Officer Comments</p>
+            <p className="text-sm text-white leading-relaxed">
+              {approval.notes || 'Astro Supplies has the best price and fastest delivery time.'}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1.5 mt-2">
+            <label htmlFor="comments" className="text-sm font-medium text-[#9CA3AF]">
+              Your Review Comments
+            </label>
+            <textarea
+              id="comments"
+              rows={4}
+              placeholder="Enter your approval/rejection notes here..."
+              className="w-full bg-[#0A0F1E] text-[#F9FAFB] rounded-lg border border-white/10 text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1]"
+            />
           </div>
         </div>
-        <Badge status={approval.status} />
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Metadata overview */}
-        <div className="md:col-span-1 flex flex-col gap-6">
-          <Card title="Award Summary">
-            <div className="flex flex-col gap-4 text-sm">
-              <div>
-                <p className="text-xs text-[#9CA3AF]">Contract Title</p>
-                <p className="font-semibold text-white mt-0.5">{approval.title}</p>
-              </div>
-
-              <div>
-                <p className="text-xs text-[#9CA3AF]">Awarded Supplier</p>
-                <p className="font-semibold text-[#6366F1] mt-0.5">{approval.vendorName}</p>
-              </div>
-
-              <div>
-                <p className="text-xs text-[#9CA3AF]">Contract Sum</p>
-                <p className="text-lg font-extrabold text-white mt-0.5">{formatCurrency(approval.amount)}</p>
-              </div>
-
-              <div className="border-t border-[#1F2937] pt-4 mt-1">
-                <p className="text-xs text-[#9CA3AF]">Requested By</p>
-                <p className="font-semibold text-white mt-0.5">{approval.requestedBy}</p>
-                <p className="text-[10px] text-[#9CA3AF] mt-0.5">Opened: {formatDate(approval.createdAt)}</p>
-              </div>
+        {/* Right Column: Cost summary */}
+        <div className="lg:col-span-4 flex flex-col gap-5 bg-[#111827] border border-white/5 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-white mb-2">Summary</h3>
+          
+          <div className="flex flex-col gap-4 text-xs md:text-sm">
+            <div className="flex items-center justify-between text-[#9CA3AF]">
+              <span>Subtotal</span>
+              <span className="font-semibold text-white">{formatCurrency(subtotalVal)}</span>
             </div>
-          </Card>
+            
+            <div className="flex items-center justify-between text-[#9CA3AF]">
+              <span>VAT (10%)</span>
+              <span className="font-semibold text-white">{formatCurrency(vatVal)}</span>
+            </div>
 
-          {/* Action Trigger */}
-          {isPending && (isManager || isAdmin) && (
-            <Card title="Authorize Decision">
-              <div className="flex flex-col gap-3">
-                <Button
-                  variant="success"
-                  icon={Check}
-                  loading={actioning}
-                  onClick={handleApprove}
-                  className="w-full rounded-lg"
-                >
-                  Approve Contract
-                </Button>
-                <Button
-                  variant="danger"
-                  icon={X}
-                  loading={actioning}
-                  onClick={handleReject}
-                  className="w-full rounded-lg"
-                >
-                  Reject Award
-                </Button>
-              </div>
-            </Card>
-          )}
-        </div>
+            <div className="h-px bg-white/10 my-1" />
 
-        {/* Right Column: Line items details */}
-        <div className="md:col-span-2 flex flex-col gap-6">
-          <Card title="RFQ Specifications & Items" subtitle="Line items requested under the parent contract template.">
-            {rfq ? (
-              <Table
-                data={rfq.items || []}
-                columns={[
-                  { key: 'description', label: 'Item description' },
-                  { key: 'quantity', label: 'Quantity' },
-                  { key: 'unit', label: 'Unit' },
-                ]}
-              />
-            ) : (
-              <p className="text-xs text-[#9CA3AF]">Failed to load parent item checklist.</p>
-            )}
-          </Card>
-
-          {approval.notes && (
-            <Card title="Award Recommendation Notes">
-              <p className="text-sm text-[#9CA3AF] whitespace-pre-wrap leading-relaxed">{approval.notes}</p>
-            </Card>
-          )}
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-bold text-white">Grand Total</span>
+              <span className="font-extrabold text-[#6366F1] text-base">{formatCurrency(totalVal)}</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Bottom Actions Row */}
+      {isPending && (isManager || isAdmin) && (
+        <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/5">
+          <Button
+            variant="danger"
+            loading={actioning}
+            onClick={handleReject}
+            className="bg-[#EF4444] hover:bg-red-600 text-white rounded-lg px-6 font-bold"
+          >
+            Reject
+          </Button>
+          <Button
+            variant="success"
+            loading={actioning}
+            onClick={handleApprove}
+            className="bg-[#10B981] hover:bg-emerald-600 text-white rounded-lg px-6 font-bold"
+          >
+            Approve
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

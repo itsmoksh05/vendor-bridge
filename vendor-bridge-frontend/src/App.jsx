@@ -8,17 +8,16 @@ export function App() {
     <>
       <RouterProvider router={router} />
       
-      {/* Premium Dark-themed toast configurations */}
       <Toaster
         position="top-right"
         toastOptions={{
           style: {
-            background: '#111827',
+            background: '#0F172A',
             color: '#F9FAFB',
-            border: '1px solid #1F2937',
+            border: '1px solid rgba(148, 163, 184, 0.18)',
             borderRadius: '12px',
             fontSize: '14px',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Inter, sans-serif',
           },
           success: {
             iconTheme: {

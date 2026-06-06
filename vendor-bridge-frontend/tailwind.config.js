@@ -7,8 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        syne: ['Syne', 'sans-serif'],
-        dm: ['DM Sans', 'sans-serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        syne: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        dm: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         navy: {

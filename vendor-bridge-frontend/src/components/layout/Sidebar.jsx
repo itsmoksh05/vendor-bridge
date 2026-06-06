@@ -130,9 +130,9 @@ export function Sidebar() {
       {/* Top Section */}
       <div className="flex flex-col flex-1 overflow-y-auto custom-scrollbar">
         {/* Logo */}
-        <div className={`flex items-center h-16 px-4 border-b border-white/5 ${collapsed ? 'justify-center' : 'gap-3'}`}>
+        <div className={`flex items-center h-16 px-4 border-b border-white/10 ${collapsed ? 'justify-center' : 'gap-3'}`}>
           {collapsed ? (
-            <svg className="w-8 h-8 text-[#6366F1] flex-shrink-0 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="w-8 h-8 text-[#6366F1] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" className="fill-[#6366F1]/10" />
               <circle cx="12" cy="12" r="3" className="fill-[#6366F1]" />
             </svg>
@@ -146,7 +146,7 @@ export function Sidebar() {
           {filteredGroups.map((group, groupIndex) => (
             <div key={groupIndex} className="flex flex-col gap-1">
               {!collapsed && (
-                <span className="text-[10px] font-bold text-[#9CA3AF] px-3 mb-1 tracking-widest uppercase">
+                <span className="text-[10px] font-semibold text-[#94A3B8] px-3 mb-1 tracking-[0.16em] uppercase">
                   {group.title}
                 </span>
               )}
@@ -156,8 +156,8 @@ export function Sidebar() {
                   to={item.path}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${isActive
-                      ? 'bg-[#6366F1]/10 text-[#6366F1] border-r-2 border-[#6366F1] font-medium'
-                      : 'text-[#9CA3AF] hover:text-white hover:bg-white/5'
+                      ? 'bg-[#6366F1]/15 text-white border border-[#6366F1]/25 shadow-[0_10px_24px_rgba(99,102,241,0.16)] font-semibold'
+                      : 'text-[#94A3B8] hover:text-white hover:bg-white/[0.06] hover:translate-x-0.5'
                     }`
                   }
                   title={collapsed ? item.label : undefined}
@@ -172,7 +172,7 @@ export function Sidebar() {
       </div>
 
       {/* Bottom Footer Section */}
-      <div className="p-3 border-t border-[#1F2937] flex flex-col gap-1.5 bg-[#0D1529]/40">
+      <div className="p-3 border-t border-white/10 flex flex-col gap-1.5 bg-slate-950/25">
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#EF4444] hover:bg-red-500/10 transition-all w-full"

@@ -29,7 +29,7 @@ export function Input({
           name={name}
           type={type}
           placeholder={placeholder}
-          className={`w-full bg-white/[0.02] hover:bg-white/[0.04] text-[#F9FAFB] rounded-lg border text-sm py-2.5 transition-all outline-none focus:ring-1 focus:ring-[#6366F1] focus:border-[#6366F1] ${
+          className={`w-full bg-white/[0.035] hover:bg-white/[0.06] text-[#F9FAFB] rounded-xl border text-sm py-2.5 transition-all outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-400/25 focus:border-indigo-300/60 ${
             Icon ? 'pl-10 pr-4' : 'px-4'
           } ${
             error
