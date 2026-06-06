@@ -2,58 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --radius: 0.875rem;
+
+  /* VendorBridge dark-first palette */
+  --background: oklch(0.16 0.03 265);            /* #0A0F1E deep navy */
+  --foreground: oklch(0.98 0.005 250);
+
+  --card: oklch(0.20 0.035 265 / 0.6);
+  --card-foreground: oklch(0.98 0.005 250);
+
+  --popover: oklch(0.18 0.035 265);
+  --popover-foreground: oklch(0.98 0.005 250);
+
+  --primary: oklch(0.62 0.22 277);               /* #6366F1 indigo */
+  --primary-foreground: oklch(0.99 0 0);
+
+  --secondary: oklch(0.26 0.04 265);
+  --secondary-foreground: oklch(0.98 0.005 250);
+
+  --muted: oklch(0.24 0.035 265);
+  --muted-foreground: oklch(0.72 0.02 260);
+
+  --accent: oklch(0.62 0.22 277);
+  --accent-foreground: oklch(0.99 0 0);
+
+  --destructive: oklch(0.64 0.22 22);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(1 0 0 / 0.10);
+  --input: oklch(1 0 0 / 0.10);
+  --ring: oklch(0.62 0.22 277);
+
+  --indigo-glow: oklch(0.62 0.24 277);
+  --cyan-glow: oklch(0.72 0.18 215);
+  --violet-glow: oklch(0.58 0.25 305);
 }
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  * {
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #0A0F1E; /* fallback */
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0F1E;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #6366F1;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4F46E5;
+  }
 }
 
-body {
-  background-color: #0A0F1E;
-  color: #F9FAFB;
-  font-family: 'DM Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer utilities {
+  .font-display {
+    font-family: 'Syne', sans-serif;
+  }
+  
+  .text-gradient {
+    background: linear-gradient(120deg, #ffffff 0%, #c7d2fe 50%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  
+  .glass-strong {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .glow-indigo {
+    box-shadow: 0 0 60px -10px rgba(99, 102, 241, 0.55), 0 0 140px -40px rgba(99, 102, 241, 0.35);
+  }
+  
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Syne', sans-serif;
+/* Orb Animations definitions */
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.1); }
 }
 
-/* Smooth scrolling for anchor links */
-a[href^="#"] {
-  scroll-behavior: smooth;
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, 40px) scale(1.15); }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0A0F1E;
-}
-::-webkit-scrollbar-thumb {
-  background: #6366F1;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #4F46E5;
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* Gradient orb animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
+.animate-orb {
+  animation: orb-float 14s ease-in-out infinite;
 }
 
-.orb {
-  animation: float 6s ease-in-out infinite;
+.animate-orb-2 {
+  animation: orb-float-2 18s ease-in-out infinite;
 }
 
-.orb-delay {
-  animation: float 8s ease-in-out infinite 2s;
+.animate-orb-slow {
+  animation: orb-float 22s ease-in-out infinite;
 }
