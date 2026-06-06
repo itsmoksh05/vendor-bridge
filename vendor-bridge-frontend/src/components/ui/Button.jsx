@@ -12,13 +12,13 @@ export function Button({
   className = '',
   ...props
 }) {
-  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 active:scale-[0.98] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyle = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/70 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-[#6366F1] hover:bg-[#4F46E5] text-white shadow-[0_4px_14px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.55)]',
-    ghost: 'border border-white/10 text-[#9CA3AF] hover:text-white hover:border-[#6366F1] hover:bg-white/5',
-    danger: 'bg-[#EF4444] hover:bg-red-600 text-white shadow-[0_4px_14px_rgba(239,68,68,0.35)]',
-    success: 'bg-[#10B981] hover:bg-emerald-600 text-white shadow-[0_4px_14px_rgba(16,185,129,0.35)]',
+    primary: 'bg-[#6366F1] hover:bg-[#4F46E5] text-white shadow-[0_12px_30px_rgba(99,102,241,0.26)] hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(99,102,241,0.36)]',
+    ghost: 'border border-white/10 text-[#CBD5E1] bg-white/[0.02] hover:text-white hover:border-indigo-300/35 hover:bg-white/[0.07]',
+    danger: 'bg-[#EF4444] hover:bg-red-600 text-white shadow-[0_12px_30px_rgba(239,68,68,0.24)] hover:-translate-y-0.5',
+    success: 'bg-[#10B981] hover:bg-emerald-600 text-white shadow-[0_12px_30px_rgba(16,185,129,0.24)] hover:-translate-y-0.5',
   };
 
   const sizes = {

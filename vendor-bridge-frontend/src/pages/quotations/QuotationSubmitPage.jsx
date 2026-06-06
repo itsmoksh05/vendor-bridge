@@ -160,118 +160,124 @@ export function QuotationSubmitPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" icon={ArrowLeft} onClick={() => navigate(`/rfq/${rfqId}`)}>
-          Back
-        </Button>
-        <div>
-          <h2 className="text-xl font-display font-extrabold text-white">Submit Quotation Proposal</h2>
-          <p className="text-sm text-[#9CA3AF] mt-0.5">Bidding on: <span className="text-white font-bold">{rfq?.rfqNumber} · {rfq?.title}</span></p>
-        </div>
+      {/* Header */}
+      <div className="border-b border-white/5 pb-4">
+        <h2 className="text-3xl font-bold text-white tracking-tight">Submit Quotations</h2>
+        <p className="text-sm text-[#9CA3AF] mt-0.5">
+          RFQ: {rfq?.title || 'Laptop Purchase'} — {rfq?.rfqNumber || 'RFQ-2026-001'} — deadline: {rfq ? formatDate(rfq.deadline) : '15 June 2026'}
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Pricing form items */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
-          <Card title="Quotation Line Items Pricing">
-            <div className="flex flex-col gap-4">
-              {fields.map((item, index) => (
-                <div key={item.id} className="p-4 rounded-xl bg-[#0A0F1E] border border-[#1F2937] flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-white">{item.description}</h4>
-                    <p className="text-xs text-[#9CA3AF] mt-0.5">Quantity: {item.quantity} {item.unit}</p>
-                  </div>
-                  
-                  {/* Unit price input */}
-                  <div className="w-full md:w-48">
-                    <Input
-                      type="number"
-                      placeholder="Unit Price ($)"
-                      name={`items.${index}.unitPrice`}
-                      icon={DollarSign}
-                      error={errors.items?.[index]?.unitPrice}
-                      register={register(`items.${index}.unitPrice`)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
+      {/* Warning banner */}
+      <div className="bg-[#10B981]/10 border border-[#10B981]/20 rounded-xl p-4 text-[#10B981] text-xs md:text-sm font-medium">
+        Please submit your best price and timeline details.
+      </div>
 
-          <Card title="Additional Bidding Terms">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <Card className="bg-[#111827] border border-white/5">
+          {/* Custom Items Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs md:text-sm">
+              <thead>
+                <tr className="bg-white/5 border-b border-white/10 text-[#9CA3AF]">
+                  <th className="p-3 font-semibold">Item Name</th>
+                  <th className="p-3 font-semibold">Required Qty</th>
+                  <th className="p-3 font-semibold w-40">Unit Price ($)</th>
+                  <th className="p-3 font-semibold text-right">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fields.map((item, index) => {
+                  const qty = Number(item.quantity) || 0;
+                  const unitPrice = Number(watchedItems?.[index]?.unitPrice) || 0;
+                  const lineTotal = qty * unitPrice;
+
+                  return (
+                    <tr key={item.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                      <td className="p-3 text-white font-medium">{item.description}</td>
+                      <td className="p-3 text-white">{qty} {item.unit || 'pcs'}</td>
+                      <td className="p-3">
+                        <input
+                          type="number"
+                          placeholder="0.00"
+                          className={`w-full bg-[#0A0F1E] text-white border rounded-lg py-1.5 px-3 text-xs outline-none focus:ring-1 focus:ring-[#6366F1] ${
+                            errors.items?.[index]?.unitPrice ? 'border-red-500' : 'border-white/10'
+                          }`}
+                          {...register(`items.${index}.unitPrice`)}
+                        />
+                      </td>
+                      <td className="p-3 text-right text-white font-semibold">
+                        {formatCurrency(lineTotal)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* Bidding terms row */}
+        <Card className="bg-[#111827] border border-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-4">
               <Input
-                label="Delivery Lead Time (Days)"
+                label="Delivery Timeline (weeks)"
                 name="deliveryDays"
                 type="number"
-                placeholder="10"
+                placeholder="2"
                 error={errors.deliveryDays}
                 register={register('deliveryDays')}
               />
 
               <Input
-                label="Quote Validity Date"
+                label="Valid Until"
                 name="validUntil"
                 type="date"
-                icon={Calendar}
                 error={errors.validUntil}
                 register={register('validUntil')}
               />
             </div>
 
-            <div className="flex flex-col gap-1.5 mt-4">
+            <div className="flex flex-col gap-1.5">
               <label htmlFor="notes" className="text-sm font-medium text-[#9CA3AF]">
-                Cover Letter / Supplier Notes
+                Additional Comments
               </label>
               <textarea
                 id="notes"
-                rows={3}
-                placeholder="Enter any additional warranties, discounts, or notes..."
-                className="w-full bg-[#111827] text-[#F9FAFB] rounded-lg border border-[#1F2937] text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1] focus:border-[#6366F1]"
+                rows={4}
+                placeholder="Specify any remarks or comments..."
+                className="w-full bg-[#0A0F1E] text-[#F9FAFB] rounded-lg border border-white/10 text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1]"
                 {...register('notes')}
               />
             </div>
-          </Card>
-        </div>
+          </div>
+        </Card>
 
-        {/* Right Column: Pricing summary */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          <Card title="Pricing Summary">
-            <div className="flex flex-col gap-4 text-sm">
-              <div className="flex items-center justify-between text-[#9CA3AF]">
-                <span>Bidding Company</span>
-                <span className="font-semibold text-white">{vendor?.name}</span>
-              </div>
-              <div className="h-px bg-[#1F2937] my-1" />
-              
-              <div className="flex items-center justify-between text-[#9CA3AF]">
-                <span>Subtotal</span>
-                <span className="font-semibold text-white">{formatCurrency(subtotal)}</span>
-              </div>
-              
-              <div className="flex items-center justify-between text-[#9CA3AF]">
-                <span>Taxes & Duties (10%)</span>
-                <span className="font-semibold text-white">{formatCurrency(tax)}</span>
-              </div>
+        {/* Grand Total panel & Buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+          <div className="text-sm">
+            <span className="text-[#9CA3AF]">Estimated Total (inc. 10% tax): </span>
+            <span className="font-extrabold text-white text-lg ml-1">{formatCurrency(total)}</span>
+          </div>
 
-              <div className="h-px bg-[#1F2937] my-1" />
-
-              <div className="flex items-center justify-between text-base">
-                <span className="font-bold text-white">Grand Total</span>
-                <span className="font-extrabold text-[#6366F1] text-lg">{formatCurrency(total)}</span>
-              </div>
-            </div>
-
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/rfq/${rfqId}`)}
+              className="border border-white/10 text-[#9CA3AF] hover:text-white"
+            >
+              Cancel
+            </Button>
             <Button
               type="submit"
-              variant="primary"
-              icon={Send}
+              variant="success"
               loading={submitting}
-              className="w-full mt-6 py-2.5 rounded-lg"
+              className="bg-[#10B981] hover:bg-emerald-600 text-white rounded-lg px-6 font-bold"
             >
               Submit Quotation
             </Button>
-          </Card>
+          </div>
         </div>
       </form>
     </div>

@@ -44,17 +44,14 @@ export function Topbar({ title = 'Dashboard' }) {
   };
 
   return (
-    <header className="h-16 bg-[#111827] border-b border-[#1F2937] px-6 flex items-center justify-between sticky top-0 z-30">
-      {/* Left Title */}
+    <header className="h-16 bg-[#0B1120]/85 border-b border-white/10 px-6 flex items-center justify-between sticky top-0 z-30 backdrop-blur-xl">
       <div>
-        <h1 className="font-display text-xl font-bold text-[#F9FAFB]">
+        <h1 className="font-display text-xl font-semibold text-[#F9FAFB]">
           {title}
         </h1>
       </div>
 
-      {/* Right Content */}
       <div className="flex items-center gap-4">
-        {/* Search Bar Button */}
         <button
           className="p-2 text-[#9CA3AF] hover:text-white rounded-lg hover:bg-white/5 transition-all"
           aria-label="Search"
@@ -62,7 +59,6 @@ export function Topbar({ title = 'Dashboard' }) {
           <Search className="h-5 w-5" />
         </button>
 
-        {/* Notifications Icon with Indicator */}
         <div className="relative">
           <button
             className="p-2 text-[#9CA3AF] hover:text-white rounded-lg hover:bg-white/5 transition-all"
@@ -73,17 +69,14 @@ export function Topbar({ title = 'Dashboard' }) {
           </button>
         </div>
 
-        {/* Vertical Divider */}
-        <div className="h-6 w-px bg-[#1F2937]" />
+        <div className="h-6 w-px bg-white/10" />
 
-        {/* User Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-3 p-1 rounded-lg hover:bg-white/5 transition-all text-left"
           >
-            {/* Initials Avatar */}
-            <div className="h-8 w-8 rounded-full bg-[#6366F1] flex items-center justify-center text-xs font-bold text-white shadow-md ring-1 ring-white/10">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center text-xs font-bold text-white shadow-md ring-1 ring-white/10">
               {getInitials(user?.name)}
             </div>
 
@@ -100,9 +93,8 @@ export function Topbar({ title = 'Dashboard' }) {
             <ChevronDown className="h-4 w-4 text-[#9CA3AF]" />
           </button>
 
-          {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#111827] border border-[#1F2937] shadow-2xl py-1 text-sm text-[#F9FAFB] animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#0F172A] border border-white/10 shadow-2xl py-1 text-sm text-[#F9FAFB] animate-in fade-in slide-in-from-top-2 duration-150">
               <button
                 onClick={() => {
                   setDropdownOpen(false);

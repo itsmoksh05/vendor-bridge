@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from '../../api/axios';
@@ -50,15 +50,15 @@ export function POListPage() {
   }, [user]);
 
   const filteredPOs = pos.filter((p) =>
-    p.poNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.vendorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.rfqNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    (p.poNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.vendorName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.rfqNumber || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-xl font-display font-extrabold text-white">Purchase Orders</h2>
+        <h2 className="text-3xl font-semibold text-white tracking-tight">Purchase Orders</h2>
         <p className="text-sm text-[#9CA3AF] mt-0.5">Track legally binding purchase instructions and order fulfillment.</p>
       </div>
 

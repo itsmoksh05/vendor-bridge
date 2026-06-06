@@ -6,6 +6,7 @@ import axios from '../../api/axios';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
+import Table from '../../components/ui/Table';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 
@@ -95,7 +96,7 @@ export function InvoiceDetailPage() {
                 <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" className="fill-[#6366F1]/10" />
                 <circle cx="12" cy="12" r="3" className="fill-[#6366F1]" />
               </svg>
-              <span className="font-display font-bold text-base text-white tracking-wider">
+              <span className="font-display font-semibold text-base text-white tracking-tight">
                 Vendor<span className="text-[#6366F1]">Bridge</span>
               </span>
             </div>
@@ -105,7 +106,7 @@ export function InvoiceDetailPage() {
 
           {/* Invoice identifiers */}
           <div className="flex flex-col md:text-right gap-1.5">
-            <h3 className="text-xl font-display font-black text-white">INVOICE</h3>
+            <h3 className="text-xl font-display font-semibold text-white">INVOICE</h3>
             <p className="text-[#9CA3AF]">
               Invoice #: <span className="font-semibold text-white">{invoice.invoiceNumber}</span>
             </p>
@@ -121,14 +122,14 @@ export function InvoiceDetailPage() {
         {/* Billing party directions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-[#1F2937] pb-6 mb-8 text-sm">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[#9CA3AF] mb-1.5">Billed To</p>
-            <p className="font-bold text-white">VendorBridge Procurement Org</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#9CA3AF] mb-1.5">Billed To</p>
+            <p className="font-semibold text-white">VendorBridge Procurement Org</p>
             <p className="text-[#9CA3AF] mt-0.5">finance@vendorbridge.com</p>
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[#9CA3AF] mb-1.5">Supplier / Payee</p>
-            <p className="font-bold text-[#6366F1]">{invoice.vendorName}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#9CA3AF] mb-1.5">Supplier / Payee</p>
+            <p className="font-semibold text-[#818CF8]">{invoice.vendorName}</p>
             <p className="text-[#9CA3AF] mt-0.5">billing@{invoice.vendorName.toLowerCase().replace(' ', '')}.com</p>
           </div>
         </div>
@@ -155,7 +156,7 @@ export function InvoiceDetailPage() {
 
         {/* Itemized pricing breakdown */}
         <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#9CA3AF] mb-3">Itemized Billings</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#9CA3AF] mb-3">Itemized Billings</p>
           <Table
             data={invoice.items || []}
             columns={[

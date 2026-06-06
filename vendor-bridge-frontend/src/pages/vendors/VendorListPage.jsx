@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Building2, Star, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
@@ -12,6 +12,7 @@ import Table from '../../components/ui/Table';
 export function VendorListPage() {
   const navigate = useNavigate();
   const { isProcurementOfficer, isAdmin } = useAuth();
+  const [activeTab, setActiveTab] = useState('active');
   const [vendors, setVendors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -33,35 +34,81 @@ export function VendorListPage() {
     fetchVendors();
   }, []);
 
-  const filteredVendors = vendors.filter((v) =>
-    v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.contact.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const counts = {
+    active: vendors.filter((v) => v.status === 'active').length,
+    pending: vendors.filter((v) => v.status === 'pending').length,
+    declined: vendors.filter((v) => v.status === 'declined').length,
+  };
+
+  const filteredVendors = vendors
+    .filter((v) => v.status === activeTab)
+    .filter((v) =>
+      (v.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (v.category || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (v.contact || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header with title, subtitle, and add button */}
+      <div className="flex flex-row items-center justify-between gap-4 border-b border-white/5 pb-4">
         <div>
-          <h2 className="text-xl font-display font-extrabold text-white">Vendors Directory</h2>
-          <p className="text-sm text-[#9CA3AF] mt-0.5">Manage corporate suppliers, ratings, and classifications.</p>
+          <h2 className="text-3xl font-semibold text-white tracking-tight">Vendors</h2>
+          <p className="text-sm text-[#9CA3AF] mt-0.5">Manage supplier profiles and registrations</p>
         </div>
         {(isProcurementOfficer || isAdmin) && (
           <Button
             variant="primary"
             icon={Plus}
             onClick={() => navigate('/vendors/add')}
-            className="rounded-lg self-start sm:self-auto"
+            className="rounded-lg self-center"
           >
-            Add New Vendor
+            Add vendor
           </Button>
         )}
       </div>
 
-      <Card>
+      {/* Tabs list */}
+      <div className="flex border-b border-white/10 gap-6 text-sm">
+        <button
+          onClick={() => setActiveTab('active')}
+          className={`pb-3 font-semibold transition-all relative ${
+            activeTab === 'active' ? 'text-[#10B981]' : 'text-[#9CA3AF] hover:text-white'
+          }`}
+        >
+          Active Vendors ({counts.active})
+          {activeTab === 'active' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#10B981]" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('pending')}
+          className={`pb-3 font-semibold transition-all relative ${
+            activeTab === 'pending' ? 'text-amber-400' : 'text-[#9CA3AF] hover:text-white'
+          }`}
+        >
+          Pending ({counts.pending})
+          {activeTab === 'pending' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('declined')}
+          className={`pb-3 font-semibold transition-all relative ${
+            activeTab === 'declined' ? 'text-red-400' : 'text-[#9CA3AF] hover:text-white'
+          }`}
+        >
+          Declined ({counts.declined})
+          {activeTab === 'declined' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-400" />
+          )}
+        </button>
+      </div>
+
+      <Card className="bg-[#111827] border border-white/5">
         {/* Search header */}
-        <div className="flex items-center gap-3 bg-[#0A0F1E] border border-[#1F2937] rounded-lg px-3 py-2 max-w-md mb-6">
-          <Search className="h-5 w-5 text-[#9CA3AF]" />
+        <div className="flex items-center gap-3 bg-[#0A0F1E] border border-white/10 rounded-lg px-3 py-2 max-w-md mb-6">
+          <Search className="h-4 w-4 text-[#9CA3AF]" />
           <input
             type="text"
             placeholder="Search vendor name, category, or contact..."
@@ -74,44 +121,25 @@ export function VendorListPage() {
         <Table
           loading={loading}
           data={filteredVendors}
-          emptyMessage="No suppliers matched your query."
+          emptyMessage={`No ${activeTab} suppliers found.`}
           columns={[
             {
               key: 'name',
-              label: 'Vendor Supplier',
+              label: 'Vendor Name',
               render: (val, row) => (
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center text-[#6366F1]">
-                    <Building2 className="h-4.5 w-4.5" />
+                  <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center text-[#9CA3AF]">
+                    <Building2 className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-white">{val}</span>
-                    <span className="text-[10px] text-[#9CA3AF]">{row.category}</span>
                   </div>
                 </div>
               ),
             },
+            { key: 'category', label: 'Category' },
             { key: 'contact', label: 'Contact Person' },
-            {
-              key: 'email',
-              label: 'Contact Info',
-              render: (val, row) => (
-                <div className="flex flex-col text-xs text-[#9CA3AF]">
-                  <span className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> {val}</span>
-                  <span className="flex items-center gap-1.5 mt-0.5"><Phone className="h-3.5 w-3.5" /> {row.phone}</span>
-                </div>
-              ),
-            },
-            {
-              key: 'rating',
-              label: 'Rating',
-              render: (val) => (
-                <div className="flex items-center gap-1 text-amber-400">
-                  <Star className="h-4 w-4 fill-current" />
-                  <span className="text-sm font-semibold">{val}</span>
-                </div>
-              ),
-            },
+            { key: 'phone', label: 'Phone' },
             {
               key: 'status',
               label: 'Status',
@@ -119,7 +147,7 @@ export function VendorListPage() {
             },
             {
               key: 'actions',
-              label: '',
+              label: 'Actions',
               render: (_, row) => (
                 <div className="flex items-center gap-2">
                   <Button
@@ -127,7 +155,7 @@ export function VendorListPage() {
                     variant="ghost"
                     onClick={() => navigate(`/vendors/${row.id}`)}
                   >
-                    View Profile
+                    View
                   </Button>
                   {(isProcurementOfficer || isAdmin) && (
                     <Button

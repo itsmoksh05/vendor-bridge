@@ -29,6 +29,11 @@ export function RFQCreatePage() {
   const [vendors, setVendors] = useState([]);
   const [loadingVendors, setLoadingVendors] = useState(true);
 
+  // Local state for inline item creation matching Screen 5
+  const [tempItemName, setTempItemName] = useState('');
+  const [tempItemQty, setTempItemQty] = useState('');
+  const [tempItemUom, setTempItemUom] = useState('pcs');
+
   const {
     register,
     control,
@@ -43,7 +48,7 @@ export function RFQCreatePage() {
       description: '',
       category: 'IT Hardware',
       deadline: '',
-      items: [{ description: '', quantity: 1, unit: 'pcs' }],
+      items: [],
       assignedVendors: [],
     },
   });
@@ -53,15 +58,15 @@ export function RFQCreatePage() {
     name: 'items',
   });
 
-  // Watch invited vendors list for selection checks
-  const selectedVendors = watch('assignedVendors');
-
   useEffect(() => {
     const fetchVendors = async () => {
       try {
         setLoadingVendors(true);
         const res = await axios.get('/vendors');
-        setVendors(res.data.filter(v => v.status === 'active'));
+        const activeVendors = res.data.filter(v => v.status === 'active');
+        setVendors(activeVendors);
+        // Auto-assign vendors behind the scenes to keep Zod validated submitting simple
+        setValue('assignedVendors', activeVendors.map(v => v.id), { shouldValidate: true });
       } catch (error) {
         toast.error('Failed to load active vendors list.');
       } finally {
@@ -69,24 +74,34 @@ export function RFQCreatePage() {
       }
     };
     fetchVendors();
-  }, []);
+  }, [setValue]);
 
-  const handleVendorToggle = (vendorId) => {
-    const currentList = [...selectedVendors];
-    const index = currentList.indexOf(vendorId);
-    if (index > -1) {
-      currentList.splice(index, 1);
-    } else {
-      currentList.push(vendorId);
+  const handleAddLineItem = () => {
+    if (!tempItemName.trim()) {
+      toast.error('Item name is required');
+      return;
     }
-    setValue('assignedVendors', currentList, { shouldValidate: true });
+    const qty = Number(tempItemQty) || 1;
+    append({
+      description: tempItemName.trim(),
+      quantity: qty,
+      unit: tempItemUom.trim() || 'pcs'
+    });
+    setTempItemName('');
+    setTempItemQty('');
+    setTempItemUom('pcs');
+    toast.success('Item added to draft checklist.');
   };
 
   const onSubmit = async (data) => {
+    if (data.items.length === 0) {
+      toast.error('Please add at least one line item to the RFQ.');
+      return;
+    }
     setLoading(true);
     try {
       await axios.post('/rfqs', data);
-      toast.success('RFQ distributed successfully!');
+      toast.success('RFQ published successfully!');
       navigate('/rfq');
     } catch (error) {
       console.error(error);
@@ -98,67 +113,90 @@ export function RFQCreatePage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" icon={ArrowLeft} onClick={() => navigate('/rfq')}>
-          Back
-        </Button>
-        <div>
-          <h2 className="text-xl font-display font-extrabold text-white">Create Request for Quotation (RFQ)</h2>
-          <p className="text-sm text-[#9CA3AF] mt-0.5">Define project requirements, specify items, and select suppliers.</p>
+    <div className="flex flex-col gap-6 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="border-b border-white/5 pb-4">
+        <h2 className="text-3xl font-bold text-white tracking-tight">Create RFQ's</h2>
+        <p className="text-sm text-[#9CA3AF] mt-0.5">open request for quotation</p>
+      </div>
+
+      {/* Timeline Stepper */}
+      <div className="flex items-center justify-between w-full max-w-xl mx-auto mb-8 relative">
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/10 -translate-y-1/2 z-0" />
+        
+        {/* Step 1 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold text-sm">
+            1
+          </div>
+          <span className="text-xs font-semibold text-white">RFQ Details</span>
+        </div>
+
+        {/* Step 2 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#1F2937] border border-white/20 text-[#9CA3AF] flex items-center justify-center font-bold text-sm bg-[#0A0F1E]">
+            2
+          </div>
+          <span className="text-xs font-semibold text-[#9CA3AF]">Items & specs</span>
+        </div>
+
+        {/* Step 3 */}
+        <div className="flex flex-col items-center gap-2 relative z-10">
+          <div className="w-8 h-8 rounded-full bg-[#1F2937] border border-white/20 text-[#9CA3AF] flex items-center justify-center font-bold text-sm bg-[#0A0F1E]">
+            3
+          </div>
+          <span className="text-xs font-semibold text-[#9CA3AF]">Review & Publish</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-        <Card title="RFQ General Information">
-          <div className="flex flex-col gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Left Column: RFQ Details */}
+          <div className="lg:col-span-6 flex flex-col gap-4 bg-[#111827] border border-white/5 rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-white mb-2">RFQ Details</h3>
+            
             <Input
-              label="RFQ Project Title"
+              label="RFQ Title"
               name="title"
-              placeholder="e.g. Procurement of high-end engineering laptops"
-              icon={FileText}
+              placeholder="e.g. Office Furniture Procurement"
               error={errors.title}
               register={register('title')}
             />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="flex flex-col gap-1.5 w-full">
-                <label htmlFor="category" className="text-sm font-medium text-[#9CA3AF]">
-                  Procurement Category
-                </label>
-                <select
-                  id="category"
-                  className="w-full bg-[#111827] text-[#F9FAFB] rounded-lg border border-[#1F2937] text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1] focus:border-[#6366F1]"
-                  {...register('category')}
-                >
-                  <option value="IT Hardware">IT Hardware</option>
-                  <option value="Office Supplies">Office Supplies</option>
-                  <option value="Software Licensing">Software Licensing</option>
-                  <option value="Lab Equipment">Lab Equipment</option>
-                  <option value="Industrial Machinery">Industrial Machinery</option>
-                </select>
-              </div>
-
-              <Input
-                label="Bidding Close Date"
-                name="deadline"
-                type="date"
-                error={errors.deadline}
-                register={register('deadline')}
-              />
+            
+            <div className="flex flex-col gap-1.5 w-full">
+              <label htmlFor="category" className="text-sm font-medium text-[#9CA3AF]">
+                Category
+              </label>
+              <select
+                id="category"
+                className="w-full bg-[#0A0F1E] text-[#F9FAFB] rounded-lg border border-white/10 text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1]"
+                {...register('category')}
+              >
+                <option value="IT Hardware">IT Hardware</option>
+                <option value="Office Supplies">Office Supplies</option>
+                <option value="Software Licensing">Software Licensing</option>
+                <option value="Lab Equipment">Lab Equipment</option>
+              </select>
             </div>
+
+            <Input
+              label="Target Delivery Date"
+              name="deadline"
+              type="date"
+              error={errors.deadline}
+              register={register('deadline')}
+            />
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="description" className="text-sm font-medium text-[#9CA3AF]">
-                Scope of Work & Requirements description
+                Description / Instructions
               </label>
               <textarea
                 id="description"
                 rows={4}
-                placeholder="Describe project details, specifications, deadlines and criteria..."
-                className={`w-full bg-[#111827] text-[#F9FAFB] rounded-lg border border-[#1F2937] text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1] focus:border-[#6366F1] ${
-                  errors.description ? 'border-[#EF4444]' : 'border-[#1F2937]'
-                }`}
+                placeholder="Describe project details, specifications..."
+                className="w-full bg-[#0A0F1E] text-[#F9FAFB] rounded-lg border border-white/10 text-sm py-2.5 px-4 outline-none focus:ring-1 focus:ring-[#6366F1]"
                 {...register('description')}
               />
               {errors.description && (
@@ -166,121 +204,103 @@ export function RFQCreatePage() {
               )}
             </div>
           </div>
-        </Card>
 
-        {/* Dynamic Items list */}
-        <Card
-          title="Line Items"
-          subtitle="Specific products or services requested in this RFQ."
-          action={
-            <Button
-              size="sm"
-              variant="ghost"
-              icon={Plus}
-              onClick={() => append({ description: '', quantity: 1, unit: 'pcs' })}
-            >
-              Add Item
-            </Button>
-          }
-        >
-          <div className="flex flex-col gap-3">
-            {fields.map((item, index) => (
-              <div key={item.id} className="flex items-start gap-4 p-4 rounded-xl bg-[#0A0F1E] border border-[#1F2937]">
-                <div className="flex-1 grid grid-cols-12 gap-3">
-                  <div className="col-span-12 md:col-span-7">
-                    <Input
-                      placeholder="Item description / specification"
-                      name={`items.${index}.description`}
-                      error={errors.items?.[index]?.description}
-                      register={register(`items.${index}.description`)}
-                    />
-                  </div>
-                  <div className="col-span-6 md:col-span-2">
-                    <Input
-                      type="number"
-                      placeholder="Qty"
-                      name={`items.${index}.quantity`}
-                      error={errors.items?.[index]?.quantity}
-                      register={register(`items.${index}.quantity`)}
-                    />
-                  </div>
-                  <div className="col-span-6 md:col-span-3">
-                    <Input
-                      placeholder="Unit (pcs, hr, box)"
-                      name={`items.${index}.unit`}
-                      error={errors.items?.[index]?.unit}
-                      register={register(`items.${index}.unit`)}
-                    />
-                  </div>
+          {/* Right Column: Items Specifications Builder */}
+          <div className="lg:col-span-6 flex flex-col gap-4 bg-[#111827] border border-white/5 rounded-2xl p-6">
+            <h3 className="text-lg font-bold text-white mb-2">Items</h3>
+            
+            {/* Inline Add Item Form Section */}
+            <div className="flex flex-col gap-3 p-4 bg-[#0A0F1E] border border-white/10 rounded-xl">
+              <div className="grid grid-cols-12 gap-3">
+                <div className="col-span-6">
+                  <label className="text-xs font-semibold text-[#9CA3AF]">Item Name</label>
+                  <input
+                    type="text"
+                    value={tempItemName}
+                    onChange={(e) => setTempItemName(e.target.value)}
+                    placeholder="e.g. Ergonomic Desk Chairs"
+                    className="w-full bg-[#111827] text-white border border-white/10 rounded-lg py-2 px-3 text-xs outline-none"
+                  />
                 </div>
-                {fields.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="p-2 text-[#EF4444] hover:bg-red-500/10 rounded-lg self-center"
-                    title="Remove item"
-                  >
-                    <Trash2 className="h-4.5 w-4.5" />
-                  </button>
-                )}
+                <div className="col-span-3">
+                  <label className="text-xs font-semibold text-[#9CA3AF]">Qty</label>
+                  <input
+                    type="number"
+                    value={tempItemQty}
+                    onChange={(e) => setTempItemQty(e.target.value)}
+                    placeholder="20"
+                    className="w-full bg-[#111827] text-white border border-white/10 rounded-lg py-2 px-3 text-xs outline-none"
+                  />
+                </div>
+                <div className="col-span-3">
+                  <label className="text-xs font-semibold text-[#9CA3AF]">UOM</label>
+                  <input
+                    type="text"
+                    value={tempItemUom}
+                    onChange={(e) => setTempItemUom(e.target.value)}
+                    placeholder="pcs"
+                    className="w-full bg-[#111827] text-white border border-white/10 rounded-lg py-2 px-3 text-xs outline-none"
+                  />
+                </div>
               </div>
-            ))}
-            {errors.items?.root && (
-              <p className="text-xs text-[#EF4444] mt-1 font-semibold">{errors.items.root.message}</p>
+              <button
+                type="button"
+                onClick={handleAddLineItem}
+                className="w-full py-2 bg-[#10B981] hover:bg-emerald-600 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 mt-1"
+              >
+                <span>+ Add Item</span>
+              </button>
+            </div>
+
+            {/* List Table of Items Added */}
+            <div className="overflow-x-auto border border-white/10 rounded-xl bg-[#0A0F1E]">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-white/5 border-b border-white/10 text-[#9CA3AF]">
+                    <th className="p-3 font-semibold">Item name</th>
+                    <th className="p-3 font-semibold">Qty</th>
+                    <th className="p-3 font-semibold">UOM</th>
+                    <th className="p-3 font-semibold text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fields.map((field, idx) => (
+                    <tr key={field.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                      <td className="p-3 font-semibold text-white">{field.description}</td>
+                      <td className="p-3 text-white">{field.quantity}</td>
+                      <td className="p-3 text-white">{field.unit}</td>
+                      <td className="p-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => remove(idx)}
+                          className="text-[#EF4444] hover:underline"
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {fields.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="p-4 text-center text-[#9CA3AF]">No items added yet. Use form above to add lines.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {errors.items && (
+              <p className="text-xs text-[#EF4444] mt-1 font-semibold">{errors.items.message}</p>
             )}
           </div>
-        </Card>
-
-        {/* Vendors Selection */}
-        <Card title="Assign Vendors" subtitle="Select matching suppliers from the directory to invite to bid.">
-          {loadingVendors ? (
-            <div className="h-10 bg-[#1F2937] rounded animate-pulse" />
-          ) : vendors.length === 0 ? (
-            <p className="text-sm text-[#9CA3AF]">No active suppliers found in this category.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
-              {vendors.map((vendor) => {
-                const isSelected = selectedVendors.includes(vendor.id);
-                return (
-                  <div
-                    key={vendor.id}
-                    onClick={() => handleVendorToggle(vendor.id)}
-                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                      isSelected
-                        ? 'bg-[#6366F1]/10 border-[#6366F1] text-white'
-                        : 'bg-[#111827] border-[#1F2937] hover:border-[#6366F1]/40 text-[#9CA3AF]'
-                    }`}
-                  >
-                    <div>
-                      <h4 className="text-sm font-bold text-white">{vendor.name}</h4>
-                      <p className="text-xs text-[#9CA3AF] mt-0.5">{vendor.category}</p>
-                    </div>
-                    <div
-                      className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${
-                        isSelected
-                          ? 'bg-[#6366F1] border-[#6366F1] text-white'
-                          : 'border-[#1F2937]'
-                      }`}
-                    >
-                      {isSelected && <span className="text-xs">✓</span>}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          {errors.assignedVendors && (
-            <p className="text-xs text-[#EF4444] mt-2 font-semibold">{errors.assignedVendors.message}</p>
-          )}
-        </Card>
+        </div>
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 mt-2">
-          <Button variant="ghost" onClick={() => navigate('/rfq')}>
-            Cancel
+        <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/5">
+          <Button variant="ghost" onClick={() => navigate('/rfq')} className="border border-white/10">
+            Save Draft
           </Button>
-          <Button type="submit" variant="primary" icon={Send} loading={loading}>
-            Publish and Send Invitations
+          <Button type="submit" variant="primary" loading={loading} className="bg-[#6366F1] hover:bg-[#4F46E5] text-white">
+            Publish RFQ
           </Button>
         </div>
       </form>

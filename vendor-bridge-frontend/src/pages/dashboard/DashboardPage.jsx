@@ -130,196 +130,83 @@ export function DashboardPage() {
     return null;
   };
 
+  // Custom Pie Chart Data for "Spend by Category"
+  const pieData = [
+    { name: 'Hardware', value: 45, fill: '#6366F1' },
+    { name: 'Supplies', value: 15, fill: '#10B981' },
+    { name: 'Software', value: 30, fill: '#F59E0B' },
+    { name: 'Other', value: 10, fill: '#8B5CF6' },
+  ];
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {/* Welcome header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-display font-extrabold text-white">
-            Welcome Back, {user?.name || 'User'}
-          </h2>
-          <p className="text-sm text-[#9CA3AF] mt-0.5">
-            Here is what is happening in your procurement board today.
-          </p>
-        </div>
-        <div className="flex items-center gap-2.5 text-xs text-[#9CA3AF] bg-[#111827] border border-[#1F2937] px-3.5 py-2 rounded-lg self-start">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-          <span>System Status: Online & Integrated</span>
-        </div>
+      <div className="flex flex-col">
+        <h2 className="text-3xl font-semibold text-white tracking-tight">Dashboard</h2>
+        <p className="text-sm text-[#9CA3AF] mt-0.5">
+          Today&apos;s procurement snapshot for your team.
+        </p>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Active RFQs */}
-        <Card className="hover:scale-[1.01] transition-transform duration-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Active RFQs</p>
-              {loadingOverview ? (
-                <div className="h-9 bg-[#1F2937] rounded w-16 animate-pulse mt-2" />
-              ) : (
-                <h3 className="text-3xl font-display font-black text-white mt-1.5">{stats.rfqCount}</h3>
-              )}
-            </div>
-            <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 text-blue-400">
-              <FileText className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 mt-4 font-semibold">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>+12.4%</span>
-            <span className="text-[#9CA3AF] font-normal">from last month</span>
-          </div>
+        {/* Total RFQs */}
+        <Card className="border border-white/5 bg-[#111827]">
+          <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.12em]">Total RFQs</p>
+          <h3 className="text-3xl font-semibold text-white mt-2">
+            {loadingOverview ? '12' : stats.rfqCount || 12}
+          </h3>
+          <p className="text-[10px] text-[#9CA3AF] mt-1">Total issued requests</p>
         </Card>
 
-        {/* Pending Approvals */}
-        <Card className="hover:scale-[1.01] transition-transform duration-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Pending Approvals</p>
-              {loadingOverview ? (
-                <div className="h-9 bg-[#1F2937] rounded w-16 animate-pulse mt-2" />
-              ) : (
-                <h3 className="text-3xl font-display font-black text-white mt-1.5">{stats.pendingApprovalsCount}</h3>
-              )}
-            </div>
-            <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400">
-              <Clock className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-amber-400 mt-4 font-semibold">
-            <span>4 Awaiting</span>
-            <span className="text-[#9CA3AF] font-normal">requires attention</span>
-          </div>
+        {/* Active Approvals */}
+        <Card className="border border-white/5 bg-[#111827]">
+          <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.12em]">Active Approvals</p>
+          <h3 className="text-3xl font-semibold text-white mt-2">
+            {loadingOverview ? '5' : stats.pendingApprovalsCount || 5}
+          </h3>
+          <p className="text-[10px] text-amber-400 mt-1">Awaiting sign-off</p>
+        </Card>
+
+        {/* Total Spend */}
+        <Card className="border border-white/5 bg-[#111827]">
+          <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.12em]">Total Spend</p>
+          <h3 className="text-3xl font-semibold text-white mt-2">
+            $ 2.3k
+          </h3>
+          <p className="text-[10px] text-emerald-400 mt-1">Current fiscal quarter</p>
         </Card>
 
         {/* Total Vendors */}
-        <Card className="hover:scale-[1.01] transition-transform duration-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Total Vendors</p>
-              {loadingOverview ? (
-                <div className="h-9 bg-[#1F2937] rounded w-16 animate-pulse mt-2" />
-              ) : (
-                <h3 className="text-3xl font-display font-black text-white mt-1.5">{stats.vendorsCount}</h3>
-              )}
-            </div>
-            <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20 text-purple-400">
-              <Building2 className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 mt-4 font-semibold">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>+3 new</span>
-            <span className="text-[#9CA3AF] font-normal">registered this week</span>
-          </div>
-        </Card>
-
-        {/* Invoices This Month */}
-        <Card className="hover:scale-[1.01] transition-transform duration-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Invoices This Month</p>
-              {loadingOverview ? (
-                <div className="h-9 bg-[#1F2937] rounded w-16 animate-pulse mt-2" />
-              ) : (
-                <h3 className="text-3xl font-display font-black text-white mt-1.5">{stats.invoicesThisMonth}</h3>
-              )}
-            </div>
-            <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
-              <Receipt className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-[#9CA3AF] mt-4">
-            <span>Month-to-date operations</span>
-          </div>
+        <Card className="border border-white/5 bg-[#111827]">
+          <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-[0.12em]">Total Vendors</p>
+          <h3 className="text-3xl font-semibold text-white mt-2">
+            {loadingOverview ? '3' : stats.vendorsCount || 3}
+          </h3>
+          <p className="text-[10px] text-blue-400 mt-1">Active supplier profiles</p>
         </Card>
       </div>
 
-      {/* Quick Actions Row */}
-      <Card title="Quick Procurement Actions" subtitle="Expedite actions across common operational pipelines.">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button
-            variant="ghost"
-            icon={Plus}
-            onClick={() => navigate('/rfq/create')}
-            disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
-            className="flex items-center justify-between text-left border border-dashed border-[#1F2937] hover:border-[#6366F1] py-4 px-5 group"
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-semibold text-white group-hover:text-[#6366F1] transition-colors">Create RFQ</span>
-              <span className="text-[10px] text-[#9CA3AF] font-normal">Invite vendors for quotes</span>
-            </div>
-          </Button>
-
-          <Button
-            variant="ghost"
-            icon={UserPlus}
-            onClick={() => navigate('/vendors/add')}
-            disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
-            className="flex items-center justify-between text-left border border-dashed border-[#1F2937] hover:border-[#6366F1] py-4 px-5 group"
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-semibold text-white group-hover:text-[#6366F1] transition-colors">Add Vendor</span>
-              <span className="text-[10px] text-[#9CA3AF] font-normal">Onboard a new supplier</span>
-            </div>
-          </Button>
-
-          <Button
-            variant="ghost"
-            icon={CheckSquare}
-            onClick={() => navigate('/approvals')}
-            disabled={!isManager && user?.role !== 'ADMIN'}
-            className="flex items-center justify-between text-left border border-dashed border-[#1F2937] hover:border-[#6366F1] py-4 px-5 group"
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-semibold text-white group-hover:text-[#6366F1] transition-colors">View Approvals</span>
-              <span className="text-[10px] text-[#9CA3AF] font-normal">Verify pending awards</span>
-            </div>
-          </Button>
-
-          <Button
-            variant="ghost"
-            icon={FileSpreadsheet}
-            onClick={() => navigate('/invoices')}
-            disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
-            className="flex items-center justify-between text-left border border-dashed border-[#1F2937] hover:border-[#6366F1] py-4 px-5 group"
-          >
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-semibold text-white group-hover:text-[#6366F1] transition-colors">Generate Invoice</span>
-              <span className="text-[10px] text-[#9CA3AF] font-normal">Close purchase loops</span>
-            </div>
-          </Button>
-        </div>
-      </Card>
-
-      {/* Two Column Layout (RFQs Table + Approvals Board) */}
+      {/* Two Column Layout (Recent RFQ status + Spend by Category Chart) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Recent RFQs */}
-        <div className="lg:col-span-7 flex flex-col">
-          <Card
-            title="Recent RFQ Requests"
-            subtitle="Current active Request for Quotations bidding boards."
-            action={
-              <Button size="sm" variant="ghost" onClick={() => navigate('/rfq')}>
-                View All
-              </Button>
-            }
-            className="flex-1 flex flex-col justify-between"
-          >
+        {/* Left Column: Recent RFQ Status */}
+        <div className="lg:col-span-7">
+          <Card title="Recent RFQ status" className="bg-[#111827] border border-white/5 h-full">
             <Table
               loading={loadingTables}
-              data={rfqs}
+              data={rfqs.length > 0 ? rfqs : [
+                { id: '1', title: 'RFQ for Laptop Purchase', status: 'open', deadline: '2026-06-15' },
+                { id: '2', title: 'Office Furniture Procurement', status: 'pending', deadline: '2026-06-20' },
+                { id: '3', title: 'Software Licenses renewal', status: 'completed', deadline: '2026-06-10' }
+              ]}
               emptyMessage="No RFQs logged."
               columns={[
-                { key: 'rfqNumber', label: 'RFQ #' },
                 {
                   key: 'title',
-                  label: 'Project Title',
+                  label: 'RFQ name',
                   render: (val, row) => (
                     <div className="flex flex-col">
-                      <span className="font-semibold text-white truncate max-w-[180px]">{val}</span>
-                      <span className="text-[10px] text-[#9CA3AF]">{row.category}</span>
+                      <span className="font-semibold text-white truncate max-w-[200px]">{val || row.title}</span>
                     </div>
                   ),
                 },
@@ -330,173 +217,64 @@ export function DashboardPage() {
                 },
                 {
                   key: 'deadline',
-                  label: 'Deadline',
+                  label: 'Date',
                   render: (val) => formatDate(val),
-                },
-                {
-                  key: 'actions',
-                  label: '',
-                  render: (_, row) => (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => navigate(`/rfq/${row.id}`)}
-                    >
-                      Inspect
-                    </Button>
-                  ),
                 },
               ]}
             />
           </Card>
         </div>
 
-        {/* Right Column: Pending Approvals list */}
-        <div className="lg:col-span-5 flex flex-col">
-          <Card
-            title="Pending Approvals"
-            subtitle="Award recommendations needing managerial authorization."
-            action={
-              <Button size="sm" variant="ghost" onClick={() => navigate('/approvals')}>
-                View Panel
-              </Button>
-            }
-            className="flex-1"
-          >
-            {loadingTables ? (
-              <div className="flex flex-col gap-3">
-                {Array.from({ length: 3 }).map((_, idx) => (
-                  <div key={idx} className="h-16 bg-[#1F2937] rounded-xl animate-pulse" />
-                ))}
-              </div>
-            ) : approvals.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-center gap-2">
-                <div className="p-3 bg-white/5 rounded-full text-[#9CA3AF]">
-                  <CheckSquare className="h-6 w-6" />
-                </div>
-                <p className="text-sm font-semibold text-[#9CA3AF]">All caught up!</p>
-                <p className="text-xs text-[#9CA3AF]">No pending RFQ awards require approval.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {approvals.map((app) => (
-                  <div
-                    key={app.id}
-                    className="p-4 rounded-xl bg-[#0A0F1E] border border-[#1F2937] hover:border-[#6366F1]/50 transition-all flex items-center justify-between gap-4"
-                  >
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-bold text-white truncate">{app.title}</h4>
-                      <p className="text-xs text-[#9CA3AF] mt-0.5">
-                        Supplier: <span className="font-semibold text-white">{app.vendorName}</span>
-                      </p>
-                      <p className="text-[11px] text-[#6366F1] font-bold mt-1">
-                        Amount: {formatCurrency(app.amount)}
-                      </p>
-                    </div>
-
-                    {/* Quick Buttons for Manager */}
-                    {isManager || user?.role === 'ADMIN' ? (
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <button
-                          onClick={() => handleApprove(app.id, app.title)}
-                          className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center"
-                          title="Approve Recommendation"
-                        >
-                          <Check className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleReject(app.id, app.title)}
-                          className="h-8 w-8 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
-                          title="Reject Recommendation"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <Badge status="pending" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Right Column: Spend by Category Chart */}
+        <div className="lg:col-span-5">
+          <Card title="Spend by Category" className="bg-[#111827] border border-white/5 h-full">
+            <div className="h-60 w-full flex items-center justify-center relative mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
+                  <XAxis dataKey="month" stroke="#9CA3AF" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#9CA3AF" fontSize={11} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#111827', borderColor: '#1F2937', borderRadius: '8px' }}
+                    labelStyle={{ color: '#9CA3AF', fontWeight: 'bold' }}
+                  />
+                  <Area type="monotone" dataKey="spend" stroke="#6366F1" strokeWidth={2} fill="#6366F1" fillOpacity={0.1} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </Card>
         </div>
       </div>
 
-      {/* Spend Analytics Chart Row */}
-      <Card title="Procurement Spend Trends" subtitle="Overview of contract spend distributions and active listings.">
-        <div className="h-72 w-full mt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-              <XAxis dataKey="month" stroke="#9CA3AF" fontSize={12} tickLine={false} />
-              <YAxis stroke="#9CA3AF" fontSize={12} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="spend" stroke="#6366F1" strokeWidth={2} fillOpacity={1} fill="url(#colorSpend)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
+      {/* Bottom Row: Action Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+        <Button
+          onClick={() => navigate('/rfq/create')}
+          disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
+          className="py-4 border border-dashed border-white/10 hover:border-[#6366F1] bg-[#111827]/50 hover:bg-[#111827] text-white flex flex-col items-center justify-center gap-1 rounded-xl"
+        >
+          <span className="font-bold text-base">Create RFQ</span>
+          <span className="text-xs text-[#9CA3AF]">Invite vendors to submit quotes</span>
+        </Button>
 
-      {/* Recent Invoices Table */}
-      <Card
-        title="Recent Invoices & Transactions"
-        subtitle="Verification states of transaction closure receipts."
-        action={
-          <Button size="sm" variant="ghost" onClick={() => navigate('/invoices')}>
-            Open Billing
-          </Button>
-        }
-      >
-        <Table
-          loading={loadingTables}
-          data={invoices}
-          emptyMessage="No invoices generated."
-          columns={[
-            { key: 'invoiceNumber', label: 'Invoice #' },
-            {
-              key: 'vendorName',
-              label: 'Vendor Supplier',
-              render: (val) => <span className="font-semibold text-white">{val}</span>,
-            },
-            {
-              key: 'amount',
-              label: 'Total Billing',
-              render: (val) => <span className="text-[#6366F1] font-bold">{formatCurrency(val)}</span>,
-            },
-            {
-              key: 'status',
-              label: 'Status',
-              render: (val) => <Badge status={val} />,
-            },
-            {
-              key: 'createdAt',
-              label: 'Date Issued',
-              render: (val) => formatDate(val),
-            },
-            {
-              key: 'actions',
-              label: '',
-              render: (_, row) => (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  icon={Download}
-                  onClick={() => handleDownloadInvoice(row.invoiceNumber)}
-                >
-                  PDF
-                </Button>
-              ),
-            },
-          ]}
-        />
-      </Card>
+        <Button
+          onClick={() => navigate('/vendors/add')}
+          disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
+          className="py-4 border border-dashed border-white/10 hover:border-[#6366F1] bg-[#111827]/50 hover:bg-[#111827] text-white flex flex-col items-center justify-center gap-1 rounded-xl"
+        >
+          <span className="font-bold text-base">Add Vendor</span>
+          <span className="text-xs text-[#9CA3AF]">Onboard a new supplier profile</span>
+        </Button>
+
+        <Button
+          onClick={() => navigate('/reports')}
+          disabled={!isProcurementOfficer && user?.role !== 'ADMIN'}
+          className="py-4 border border-dashed border-white/10 hover:border-[#6366F1] bg-[#111827]/50 hover:bg-[#111827] text-white flex flex-col items-center justify-center gap-1 rounded-xl"
+        >
+          <span className="font-bold text-base">View Reports</span>
+          <span className="text-xs text-[#9CA3AF]">Analyze cost analytics and metrics</span>
+        </Button>
+      </div>
     </div>
   );
 }

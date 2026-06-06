@@ -4,7 +4,7 @@ export function Logo() {
   return (
     <div className="flex items-center gap-2.5 select-none">
       <svg
-        className="w-8 h-8 text-[#6366F1] flex-shrink-0 animate-pulse"
+        className="w-8 h-8 text-[#6366F1] flex-shrink-0"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -16,7 +16,7 @@ export function Logo() {
         />
         <circle cx="12" cy="12" r="3" className="fill-[#6366F1]" />
       </svg>
-      <span className="font-display font-bold text-lg text-white tracking-wider">
+      <span className="font-display font-semibold text-lg text-white tracking-tight">
         Vendor<span className="text-[#6366F1]">Bridge</span>
       </span>
     </div>
