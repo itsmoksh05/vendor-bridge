@@ -1,23 +1,41 @@
-import Navbar from './components/landing/Navbar.jsx'
-import Hero from './components/landing/Hero.jsx'
-import Stats from './components/landing/Stats.jsx'
-import Features from './components/landing/Features.jsx'
-import HowItWorks from './components/landing/HowItWorks.jsx'
-import Roles from './components/landing/Roles.jsx'
-import CTA from './components/landing/CTA.jsx'
-import Footer from './components/landing/Footer.jsx'
+import React from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { router } from './router';
 
-export default function App() {
+export function App() {
   return (
-    <main className="bg-[#0A0F1E] text-white overflow-x-hidden">
-      <Navbar />
-      <Hero />
-      <Stats />
-      <Features />
-      <HowItWorks />
-      <Roles />
-      <CTA />
-      <Footer />
-    </main>
-  )
+    <>
+      <RouterProvider router={router} />
+      
+      {/* Premium Dark-themed toast configurations */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#111827',
+            color: '#F9FAFB',
+            border: '1px solid #1F2937',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontFamily: 'DM Sans, sans-serif',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10B981',
+              secondary: '#111827',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#EF4444',
+              secondary: '#111827',
+            },
+          },
+        }}
+      />
+    </>
+  );
 }
+
+export default App;
